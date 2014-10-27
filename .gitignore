@@ -1,0 +1,10 @@
+*.log
+*.txt
+*.png
+*.jpg
+/build/
+/dist/
+/map/
+/map2/
+/nbproject/private/
+/inputs/
