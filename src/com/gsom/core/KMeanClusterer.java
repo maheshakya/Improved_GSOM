@@ -8,6 +8,7 @@ import com.gsom.objects.GCluster;
 import com.gsom.objects.GNode;
 import com.gsom.util.GSOMConstants;
 import com.gsom.util.Utils;
+import com.gsom.ui.MainWindow;
 import java.util.*;
 
 /**
@@ -133,7 +134,11 @@ public class KMeanClusterer {
             int minIdx = 0;
 
             for (int i = 0; i < clusters.size(); i++) {
-                double dist = Utils.calcEucDist(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
+                double dist = 0;
+                if (MainWindow.distance == 3)
+                    dist = Utils.calcGausssianKernelDistance(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
+                else
+                    dist = Utils.calcEucDist(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
                 if (dist < minDist) {
                     minIdx = i;
                     minDist = dist;
@@ -185,7 +190,10 @@ public class KMeanClusterer {
 
     //this is inter cluster distance of i,j clusters
     private double getMIJ(GCluster i, GCluster j) {
-        return Utils.calcEucDist(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
+        if (MainWindow.distance == 3)
+            return Utils.calcGausssianKernelDistance(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
+        else
+            return Utils.calcEucDist(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
     }
 
     //returns a string that identifies 2 clusters together

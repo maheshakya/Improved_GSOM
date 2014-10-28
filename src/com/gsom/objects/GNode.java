@@ -66,8 +66,7 @@ public class GNode {
 		}
 	}
         
-        public void adjustWeightsGausssian(double[] iWeights,double influence,double learningRate){
-               
+        public void adjustWeightsGausssian(double[] iWeights,double influence,double learningRate){              
            
                 double coef = influence*learningRate*
                         (1/2*Math.pow(GSOMConstants.SIGMA_FOR_GAUSSIAN, 2))*

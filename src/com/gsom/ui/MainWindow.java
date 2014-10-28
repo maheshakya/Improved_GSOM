@@ -395,6 +395,11 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         jLabel10.setText("Number of Clusters :");
 
         cCountTxt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        cCountTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cCountTxtActionPerformed(evt);
+            }
+        });
 
         jLabel12.setText("/");
 
@@ -693,6 +698,10 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         
         matrixf.setVisible(true);
     }//GEN-LAST:event_viewMatrixBtnActionPerformed
+
+    private void cCountTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cCountTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cCountTxtActionPerformed
 
     @Override
     public void clickedOnImage(String key, ArrayList<String> values) {
