@@ -3,7 +3,8 @@ package com.gsom.objects;
 import com.gsom.util.GSOMConstants;
 import com.gsom.util.Utils;
 
-import fr.lip6.jkernelmachines.kernel.typed.DoubleGaussL2;
+import com.gsom.ui.MainWindow;
+import com.gsom.kernel.GaussianKernelL2;
 
 public class GNode {
 
@@ -44,6 +45,9 @@ public class GNode {
 	}
 
 	public void calcAndUpdateErr(double[] iWeight){
+            if (MainWindow.distance==3)
+                this.errorValue += Utils.calcGausssianKernelDistance(this.weights, iWeight,GSOMConstants.DIMENSIONS);
+            else
 		this.errorValue += Utils.calcEucDist(this.weights, iWeight,GSOMConstants.DIMENSIONS);
 	}
 	
@@ -63,10 +67,11 @@ public class GNode {
 	}
         
         public void adjustWeightsGausssian(double[] iWeights,double influence,double learningRate){
-                DoubleGaussL2 gaussian = new DoubleGaussL2(GSOMConstants.GAMMA_FOR_GAUSSIAN);
-                
-                double[] elementWeights = Utils.vectorSubstraction(weights, iWeights, GSOMConstants.DIMENSIONS);
-                double coef = influence*learningRate*(1/2*Math.pow(GSOMConstants.GAMMA_FOR_GAUSSIAN, 2))*gaussian.distanceValueOf(iWeights, weights);
+               
+           
+                double coef = influence*learningRate*
+                        (1/2*Math.pow(GSOMConstants.SIGMA_FOR_GAUSSIAN, 2))*
+                        GaussianKernelL2.calcKernel(iWeights, weights, GSOMConstants.DIMENSIONS);
 		for(int i=0;i<GSOMConstants.DIMENSIONS;i++){
 			weights[i] += coef*(iWeights[i]-weights[i]);
 		}

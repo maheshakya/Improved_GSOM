@@ -6,7 +6,7 @@ import java.util.Map;
 import com.gsom.objects.GNode;
 import com.gsom.ui.MainWindow;
 
-import fr.lip6.jkernelmachines.kernel.typed.DoubleGaussL2;
+import com.gsom.kernel.GaussianKernelL2;
 
 public class Utils {
 
@@ -21,9 +21,17 @@ public class Utils {
     
     public static double[] generateRandomArray(int dimensions) {
         double[] arr = new double[dimensions];
+        double sum = 0;
         for (int i = 0; i < dimensions; i++) {
             arr[i] = Math.random();
+            sum += arr[i];
         }
+        // For convex coefficients
+        if(MainWindow.distance==3){
+            for (int i = 0; i < dimensions; i++)
+                arr[i] /= sum;
+        }
+        
         return arr;
     }
 
@@ -78,7 +86,7 @@ public class Utils {
         }
         else if (MainWindow.distance == 3) {
             for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
-                currDist = Utils.calcGausssianKernel(input, entry.getValue().getWeights(),GSOMConstants.DIMENSIONS);
+                currDist = -calcGausssianKernelDistance(input, entry.getValue().getWeights(),GSOMConstants.DIMENSIONS);
 
                 if (currDist < minDist) {
                     winner = entry.getValue();
@@ -151,13 +159,9 @@ public class Utils {
         return total/(dimensions*dimensions);
     }
     
-    public static double calcGausssianKernel(double[] vec1, double[] vec2,
+    public static double calcGausssianKernelDistance(double[] vec1, double[] vec2,
             int dimensions){
-        double result = 0;
-        DoubleGaussL2 gaussianKernel = new DoubleGaussL2(GSOMConstants.GAMMA_FOR_GAUSSIAN);
-        
-        result = gaussianKernel.distanceValueOf(vec1, vec2);
-        return result;
+        return GaussianKernelL2.calcKernel(vec1, vec2, dimensions);
     }
     
     public static double[] vectorSubstraction(double[] vec1, double[] vec2,
