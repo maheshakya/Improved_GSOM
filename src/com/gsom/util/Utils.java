@@ -26,6 +26,7 @@ public class Utils {
             arr[i] = Math.random();
             sum += arr[i];
         }
+        
         // For convex coefficients
         if(MainWindow.distance==3){
             for (int i = 0; i < dimensions; i++)
@@ -161,6 +162,8 @@ public class Utils {
     
     public static double calcGausssianKernelDistance(double[] vec1, double[] vec2,
             int dimensions){
+        normalizeVector(vec1);
+        normalizeVector(vec2);
         return GaussianKernelL2.calcKernel(vec1, vec2, dimensions);
     }
     

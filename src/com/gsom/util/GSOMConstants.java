@@ -13,7 +13,7 @@ public class GSOMConstants {
 	public static double START_LEARNING_RATE;
 	public static int MAX_ITERATIONS;
         
-        public static double SIGMA_FOR_GAUSSIAN = 50;
+        public static double SIGMA_FOR_GAUSSIAN = 3;
         
         public static double getGT(){
             GT = - DIMENSIONS * DIMENSIONS * Math.log(SPREAD_FACTOR);

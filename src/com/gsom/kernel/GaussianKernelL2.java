@@ -15,8 +15,6 @@ import com.gsom.util.GSOMConstants;
 
 public class GaussianKernelL2 {
     
-    private double sigma = 1;
-    
     public static double vectorSquaredMagnitude(double[] vect1, double[] vect2, int dimension){
         double result = 0;
         for (int i=0; i<dimension; i++)
