@@ -46,7 +46,7 @@ public class GNode {
 
 	public void calcAndUpdateErr(double[] iWeight){
             if (MainWindow.distance==3)
-                this.errorValue += Utils.calcGausssianKernelDistance(this.weights, iWeight,GSOMConstants.DIMENSIONS);
+                this.errorValue += Math.sqrt(2*(1-Utils.calcGausssianKernelDistance(this.weights, iWeight,GSOMConstants.DIMENSIONS)));
             else
 		this.errorValue += Utils.calcEucDist(this.weights, iWeight,GSOMConstants.DIMENSIONS);
 	}

@@ -22,8 +22,8 @@ public class GSOMTrainer {
     }
 
     public Map<String,GNode> trainNetwork(ArrayList<String> iStrings, ArrayList<double[]> iWeights) {
-        initFourNodes(initType);	//init the map with four nodes
-        for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
+        initFourNodes(initType);	//init the map with four nodes        
+         for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
             int k = 0;
             double learningRate = Utils.getLearningRate(i, nodeMap.size());
             double radius = Utils.getRadius(i, Utils.getTimeConst());
@@ -34,6 +34,7 @@ public class GSOMTrainer {
         }
         return nodeMap;
     }
+    
 
     private void trainForSingleIterAndSingleInput(int iter, double[] input, String str, double learningRate, double radius) {
 

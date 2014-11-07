@@ -131,9 +131,6 @@ public class Utils {
     public static double calcChiDistance(double[] vec1, double[] vec2,int dimensions) {
         
         double total=0;
-        normalizeVector(vec1);
-        normalizeVector(vec2);
-        
         for(int i=0;i<dimensions;i++){
             total += Math.pow(vec1[i]-vec2[i], 2)/(vec1[i]+vec2[i]);
         }
@@ -142,10 +139,6 @@ public class Utils {
 
     public static double calcIntersectionDist(double[] vec1, double[] vec2, int dimensions) {
         double total = 0;
-        
-        normalizeVector(vec1);
-        normalizeVector(vec2);
-        
         for (int i = 0; i < dimensions; i++) {
             total += Math.min(vec1[i], vec2[i]);
         }
@@ -153,17 +146,17 @@ public class Utils {
     }
     
     public static double calcCosineDist(double[] vec1,double[] vec2,int dimensions){
-        double total = 0;
+        double total = 0;        
         for(int i=0;i<dimensions;i++){
             total += vec1[i]*vec2[i];
         }
+        
         return total/(dimensions*dimensions);
     }
     
     public static double calcGausssianKernelDistance(double[] vec1, double[] vec2,
             int dimensions){
-        normalizeVector(vec1);
-        normalizeVector(vec2);
+
         return GaussianKernelL2.calcKernel(vec1, vec2, dimensions);
     }
     
@@ -176,15 +169,41 @@ public class Utils {
         return result;
     }
     
-    private static void normalizeVector(double[] vec){
-        double max1=0;
+    public static double[] normalizeVector(double[] vec){
+//        double max1 = Double.MIN_VALUE;
+//        double min1 = Double.MAX_VALUE;
+//        
+//        for(int i=0;i<vec.length;i++){
+//            max1 = Math.max(max1, vec[i]);
+//            min1 = Math.min(min1, vec[i]);
+//        }
+//        double denominator = max1 - min1;
+//        for(int i=0;i<vec.length;i++){
+//            vec[i]=((double)vec[i] - min1)/denominator;           
+//        }
         
-        for(int i=0;i<vec.length;i++){
-            max1 = Math.max(max1, vec[i]);
+        double[] zeroVector = new double[vec.length];
+        for (int i = 0; i < vec.length; i++){
+            zeroVector[i] = 0;
         }
-        
+        double denominator = calcEucDist(vec, zeroVector, vec.length);
+
         for(int i=0;i<vec.length;i++){
-            vec[i]=(double)vec[i]/max1;           
+            vec[i]= vec[i]/denominator;           
+        }
+        return vec;
+    
+    }
+    
+    private static void normalizeVectorEuclidean(double[] vec){
+        double[] zeroVector = new double[vec.length];
+        for (int i = 0; i < vec.length; i++){
+            zeroVector[i] = 0;
+        }
+        double denominator = calcEucDist(vec, zeroVector, vec.length);
+
+        for(int i=0;i<vec.length;i++){
+            vec[i]= vec[i]/denominator;           
         }
     
     }

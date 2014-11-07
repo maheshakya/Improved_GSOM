@@ -12,7 +12,11 @@ import com.gsom.util.GSOMConstants;
 import com.gsom.util.input.parsing.InputParser;
 import com.gsom.util.input.parsing.InputParserFactory;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GSOMRun implements InputParsedListener{
 
@@ -70,6 +74,28 @@ public class GSOMRun implements InputParsedListener{
         
         map = smoothner.smoothGSOM(map, parser.getWeights());
         listener.stepCompleted("Smoothing phase completed!");
+        
+        try{
+            FileWriter fw = new FileWriter("GNODE_MAP.txt");
+
+            System.out.println(map.size());
+            Iterator<String>  keys = map.keySet().iterator();
+
+            while(keys.hasNext()){
+                String key = keys.next();
+                String weights_str = "";
+                double[] weights = map.get(key).getWeights();
+                for (int i = 0; i < weights.length; i++)
+                    weights_str += "," + String.valueOf(weights[i]);
+
+                System.out.println(key + weights_str);
+
+                fw.write(key + weights_str + "\n");           
+            }
+            fw.close();
+        }catch(IOException e){
+            System.err.println(e);
+        }
         
         tester.testGSOM(map, parser.getWeights(), parser.getStrForWeights());
         this.testResults = tester.getTestResultMap();

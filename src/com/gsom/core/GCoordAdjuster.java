@@ -11,8 +11,8 @@ public class GCoordAdjuster {
 	public Map<String,GNode> adjustMapCoords(Map<String,GNode> map){
 		Map<String,GNode> newMap = new HashMap<String,GNode>();
 		
-		int minX=0;
-		int minY=0;
+		int minX=Integer.MAX_VALUE;
+		int minY=Integer.MAX_VALUE;
 		//find minimum x,y coordinates in the map
 		for(GNode node: map.values()){
 			if(node.getX()<minX){
@@ -23,7 +23,7 @@ public class GCoordAdjuster {
 			}
 		}
 		
-		System.out.println("Min,Max: "+minX+","+minY);
+		System.out.println("MinX,MinY: "+minX+","+minY);
 		//adjust node coordinates by subtracting the minimum x,y from all nodes
                 //using map.values here is OK because we're discarding the old map anyway
 		for(GNode node: map.values()){
