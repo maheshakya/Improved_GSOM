@@ -37,7 +37,7 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="353" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -392,14 +392,19 @@
         <Component class="javax.swing.JComboBox" name="jDistance">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
+              <StringArray count="6">
                 <StringItem index="0" value="Euclidean"/>
-                <StringItem index="1" value="Chi-Square"/>
-                <StringItem index="2" value="Cosine"/>
+                <StringItem index="1" value="cosine"/>
+                <StringItem index="2" value="chi-square"/>
                 <StringItem index="3" value="Gaussian Kernel"/>
+                <StringItem index="4" value="Linear Kernel"/>
+                <StringItem index="5" value="MK Linear"/>
               </StringArray>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jDistanceActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>

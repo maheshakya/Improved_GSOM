@@ -7,6 +7,7 @@ import com.gsom.objects.GNode;
 import com.gsom.ui.MainWindow;
 
 import com.gsom.kernel.GaussianKernelL2;
+import com.gsom.kernel.LinearKernel;
 
 public class Utils {
 
@@ -28,10 +29,34 @@ public class Utils {
         }
         
         // For convex coefficients
-        if(MainWindow.distance==3){
-            for (int i = 0; i < dimensions; i++)
-                arr[i] /= sum;
+        for (int i = 0; i < dimensions; i++)
+            arr[i] /= sum;
+        
+        
+        return arr;
+    }
+    
+    // Funtion for multiple kernel
+    public static double[] generateRandomArray(int dimension1, int dimension2) {
+        double[] arr = new double[dimension1+dimension2];
+        double sum1 = 0;
+        double sum2 = 0;
+        for (int i = 0; i < dimension1; i++) {
+            arr[i] = Math.random();
+            sum1 += arr[i];
         }
+        
+        for (int i = dimension1; i < dimension1+dimension2; i++) {
+            arr[i] = Math.random();
+            sum2 += arr[i];
+        }
+        
+        // For convex coefficients
+        for (int i = 0; i < dimension1; i++)
+            arr[i] /= sum1;
+        
+        for (int i = dimension1; i < dimension1+dimension2; i++)
+            arr[i] /= sum2;
         
         return arr;
     }
@@ -87,7 +112,7 @@ public class Utils {
         }
         else if (MainWindow.distance == 3) {
             for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
-                currDist = -calcGausssianKernelDistance(input, entry.getValue().getWeights(),GSOMConstants.DIMENSIONS);
+                currDist = -GaussianKernelL2.calcKernel(input, entry.getValue().getWeights(),GSOMConstants.DIMENSIONS);
 
                 if (currDist < minDist) {
                     winner = entry.getValue();
@@ -96,8 +121,43 @@ public class Utils {
             }
             return winner;
         }
+        else if (MainWindow.distance == 4) {
+            for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
+                currDist = LinearKernel.calcKernel(entry.getValue().getWeights(), entry.getValue().getWeights(),GSOMConstants.DIMENSIONS) - 
+                        2*LinearKernel.calcKernel(input, entry.getValue().getWeights(),GSOMConstants.DIMENSIONS);
+
+                if (currDist < minDist) {
+                    winner = entry.getValue();
+                    minDist = currDist;
+                }
+            }
+            return winner;
+        }
+        
         return null;
 
+    }
+    
+    // Winner selection for multiple kernels
+    public static GNode selectWinner(Map<String, GNode> nodeMap, double[] input1, double[] input2, double[] coefs) {
+        GNode winner = null;
+        double currDist = Double.MAX_VALUE;
+        double minDist = Double.MAX_VALUE;
+        
+        if (MainWindow.distance == 5) {
+            for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
+                currDist = Utils.calcMultipleLinearKernelDistance(input1, input2, entry.getValue().getWeights(), input1.length, input2.length, coefs);
+
+                if (currDist < minDist) {
+                    winner = entry.getValue();
+                    minDist = currDist;
+                }
+            }
+            return winner;
+        }
+        
+        
+        return null;
     }
 
     //---TESTED INline with the C# code---
@@ -109,10 +169,36 @@ public class Utils {
             double influence = Math.exp(-(double)nodeDistSqr / (2 * radiusSqr));
             if(MainWindow.distance==3)
                 node.adjustWeightsGausssian(input, influence, learningRate);
+            else if (MainWindow.distance==4)
+                node.adjustWeightsLinear(input, influence, learningRate);
             else
                 node.adjustWeights(input, influence, learningRate);
         }
         return node;
+    }
+    
+    // Function for multiple kernels
+    public static GNode adjustNeighbourWeight(GNode node, GNode winner, double[] input1, double[] input2, double radius, double learningRate) {
+        double nodeDistSqr = Math.pow(winner.getX() - node.getX(), 2) + Math.pow(winner.getY() - node.getY(), 2);
+        double radiusSqr = radius*radius;
+        //if node is within the radius
+        if (nodeDistSqr < radiusSqr) {
+            double influence = Math.exp(-(double)nodeDistSqr / (2 * radiusSqr));
+            if(MainWindow.distance==5)
+                node.adjustWeightsLinear(input1, input2, influence, learningRate);
+        }
+        return node;
+    }
+    
+     public static double getInfluence(GNode node, GNode winner, double radius, double learningRate) {
+        double nodeDistSqr = Math.pow(winner.getX() - node.getX(), 2) + Math.pow(winner.getY() - node.getY(), 2);
+        double radiusSqr = radius*radius;
+        //if node is within the radius
+        
+        double influence = 0;
+        if (nodeDistSqr < radiusSqr)
+            influence = Math.exp(-(double)nodeDistSqr / (2 * radiusSqr));
+        return influence;
     }
 
     public static double getRadius(int iter, double timeConst) {
@@ -157,7 +243,19 @@ public class Utils {
     public static double calcGausssianKernelDistance(double[] vec1, double[] vec2,
             int dimensions){
 
-        return GaussianKernelL2.calcKernel(vec1, vec2, dimensions);
+        return GaussianKernelL2.gaussianKernelDistance(vec1, vec2, dimensions);
+    }
+    
+    public static double calcLinearKernelDistance(double[] vec1, double[] vec2,
+            int dimensions){
+
+        return LinearKernel.LinearKernelDistance(vec1, vec2, dimensions);
+    }
+    
+    public static double calcMultipleLinearKernelDistance(double[] vec1, double[] vec2, double[] nodeWeights,
+            int dimension1, int dimension2, double[] coefs){
+
+        return LinearKernel.LinearKernelDistance(vec1, vec2, nodeWeights, dimension1, dimension2, coefs);
     }
     
     public static double[] vectorSubstraction(double[] vec1, double[] vec2,
@@ -195,16 +293,20 @@ public class Utils {
     
     }
     
-    private static void normalizeVectorEuclidean(double[] vec){
-        double[] zeroVector = new double[vec.length];
-        for (int i = 0; i < vec.length; i++){
-            zeroVector[i] = 0;
-        }
-        double denominator = calcEucDist(vec, zeroVector, vec.length);
-
+    public static double[] normalizeVectorMinMax(double[] vec){
+        double max1 = Double.MIN_VALUE;
+        double min1 = Double.MAX_VALUE;
+        
         for(int i=0;i<vec.length;i++){
-            vec[i]= vec[i]/denominator;           
+            max1 = Math.max(max1, vec[i]);
+            min1 = Math.min(min1, vec[i]);
         }
+        double denominator = max1 - min1;
+        for(int i=0;i<vec.length;i++){
+            vec[i]=((double)vec[i] - min1)/denominator;           
+                
+        }
+        return vec;
     
     }
 }

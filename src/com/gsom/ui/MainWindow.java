@@ -341,7 +341,12 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
 
         jLabel8.setText("Distance");
 
-        jDistance.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Euclidean", "Chi-Square", "Cosine", "Gaussian Kernel" }));
+        jDistance.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Euclidean", "cosine", "chi-square", "Gaussian Kernel", "Linear Kernel", "MK Linear" }));
+        jDistance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDistanceActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Parser");
 
@@ -466,7 +471,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                                 .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jLabel6)
-                                .addGap(0, 353, Short.MAX_VALUE))))
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -584,8 +589,12 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             distance = 1;
         } else if(jDistance.getSelectedIndex()==2){
             distance = 2;
-        }else{
+        }else if(jDistance.getSelectedIndex()==3){
             distance = 3;
+        }else if(jDistance.getSelectedIndex()==4){
+            distance = 4;
+        }else{
+            distance = 5;
         }
         
         InitType initType=null;
@@ -702,6 +711,10 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
     private void cCountTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cCountTxtActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cCountTxtActionPerformed
+
+    private void jDistanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDistanceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jDistanceActionPerformed
 
     @Override
     public void clickedOnImage(String key, ArrayList<String> values) {

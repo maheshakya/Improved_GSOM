@@ -136,7 +136,10 @@ public class KMeanClusterer {
             for (int i = 0; i < clusters.size(); i++) {
                 double dist = 0;
                 if (MainWindow.distance == 3)
-                    dist =  Math.sqrt(2*(1-Utils.calcGausssianKernelDistance(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS)));
+                    dist =  Utils.calcGausssianKernelDistance(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
+                else if (MainWindow.distance == 4)
+                    dist =  Utils.calcLinearKernelDistance(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
+               
                 else
                     dist = Utils.calcEucDist(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
                 if (dist < minDist) {
@@ -192,6 +195,8 @@ public class KMeanClusterer {
     private double getMIJ(GCluster i, GCluster j) {
         if (MainWindow.distance == 3)
             return Utils.calcGausssianKernelDistance(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
+        else if(MainWindow.distance == 4)
+            return Utils.calcLinearKernelDistance(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
         else
             return Utils.calcEucDist(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
     }

@@ -46,10 +46,18 @@ public class GNode {
 
 	public void calcAndUpdateErr(double[] iWeight){
             if (MainWindow.distance==3)
-                this.errorValue += Math.sqrt(2*(1-Utils.calcGausssianKernelDistance(this.weights, iWeight,GSOMConstants.DIMENSIONS)));
+                this.errorValue += Utils.calcGausssianKernelDistance(this.weights, iWeight,GSOMConstants.DIMENSIONS);
+            else if (MainWindow.distance==4)
+                this.errorValue += Utils.calcLinearKernelDistance(this.weights, iWeight,GSOMConstants.DIMENSIONS);
             else
 		this.errorValue += Utils.calcEucDist(this.weights, iWeight,GSOMConstants.DIMENSIONS);
 	}
+        
+        // Function for multiple kernel
+        public void calcAndUpdateErr(double[] iWeight1, double[] iWeight2, double[] coefs ){
+            if (MainWindow.distance==5)
+                this.errorValue += Utils.calcMultipleLinearKernelDistance(iWeight1, iWeight2, this.weights, iWeight1.length, iWeight2.length, coefs);
+     	}
 	
 	public double getErrorValue() {
 		return errorValue;
@@ -74,6 +82,30 @@ public class GNode {
 		for(int i=0;i<GSOMConstants.DIMENSIONS;i++){
 			weights[i] += coef*(iWeights[i]-weights[i]);
 		}
+                
+
+	}
+        
+        public void adjustWeightsLinear(double[] iWeights,double influence,double learningRate){           
+           
+                for(int i=0;i<GSOMConstants.DIMENSIONS;i++){
+			weights[i] += influence*learningRate*2*(iWeights[i] - weights[i]);
+		}
+                
+
+	}
+        
+        // Function for multiple kernels
+        public void adjustWeightsLinear(double[] iWeights1, double[] iWeights2, double influence,double learningRate){           
+           
+                for(int i=0;i<iWeights1.length;i++){
+			weights[i] += influence*learningRate*2*(iWeights1[i] - weights[i]);
+		}
+                
+                for(int i=iWeights1.length;i<iWeights1.length+iWeights2.length;i++){
+			weights[i] += influence*learningRate*2*(iWeights2[i] - weights[i]);
+		}
+                
 
 	}
         

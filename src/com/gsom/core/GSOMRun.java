@@ -22,6 +22,7 @@ public class GSOMRun implements InputParsedListener{
 
     private InputParserFactory parserFactory;
     private InputParser parser;
+    private InputParser paser2;
     private GSOMTrainer trainer;
     private GCoordAdjuster adjuster;
     private GSOMSmoothner smoothner;

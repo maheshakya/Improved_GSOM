@@ -1,5 +1,16 @@
-package com.gsom.core;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
+package com.gsom.kernel;
+
+/**
+ *
+ * @author maheshakya
+ */
+import com.gsom.core.NodeGrowthHandler;
 import com.gsom.enums.InitType;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,49 +20,109 @@ import com.gsom.objects.GNode;
 import com.gsom.util.GSOMConstants;
 import com.gsom.util.Utils;
 
-public class GSOMTrainer {
+import com.gsom.kernel.GaussianKernelL2;
+import com.gsom.kernel.LinearKernel;
+import com.gsom.ui.MainWindow;
+import java.util.Arrays;
 
+public class MultipleKernelTrainer {
+    
+    private int numberOfKernels;
+    private double[] coefficients;
+
+    public double[] getCoefficients() {
+        return coefficients;
+    }
+    
     private Map<String, GNode> nodeMap;
     private NodeGrowthHandler growthHandler;
     private InitType initType;
 
-    public GSOMTrainer(InitType initType) {
+    public MultipleKernelTrainer(InitType initType) {
         this.initType = initType;
         nodeMap = new HashMap<String, GNode>();
         growthHandler = new NodeGrowthHandler();
+        
+        numberOfKernels = 2;
     }
 
-    public Map<String,GNode> trainNetwork(ArrayList<String> iStrings, ArrayList<double[]> iWeights) {
+    public Map<String,GNode> trainNetwork(ArrayList<String> iStrings, ArrayList<double[]> iWeights1, ArrayList<double[]> iWeights2) {
 //        for(int i=0; i<iWeights.size();i++)
 //            iWeights.set(i, Utils.normalizeVectorMinMax(iWeights.get(i)));
-        initFourNodes(initType);	//init the map with four nodes        
+        
+        initFourNodes(initType);	//init the map with four nodes  
+        coefficients = initCoeffs();
          for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
             int k = 0;
             double learningRate = Utils.getLearningRate(i, nodeMap.size());
             double radius = Utils.getRadius(i, Utils.getTimeConst());
-            for (double[] input : iWeights) {
-                trainForSingleIterAndSingleInput(i, input, iStrings.get(k), learningRate, radius);
-                k++;
+            for (int j=0; j<iWeights1.size(); j++)
+            {
+               trainForSingleIterAndSingleInput(i,iWeights1.get(j), iWeights2.get(j), iStrings.get(k), learningRate, radius);
+                k++; 
             }
-        }
+         }
         return nodeMap;
     }
     
+    
+    private void trainForSingleIterAndSingleInput(int iter, double[] input1, double[] input2, String str, double learningRate, double radius) {
 
-    private void trainForSingleIterAndSingleInput(int iter, double[] input, String str, double learningRate, double radius) {
+        GNode winner = Utils.selectWinner(nodeMap, input1, input2, coefficients);
 
-        GNode winner = Utils.selectWinner(nodeMap, input);
-
-        winner.calcAndUpdateErr(input);
+        winner.calcAndUpdateErr(input1, input2, coefficients);
 
         for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
-            entry.setValue(Utils.adjustNeighbourWeight(entry.getValue(), winner, input, radius, learningRate));
+            entry.setValue(Utils.adjustNeighbourWeight(entry.getValue(), winner, input1, input2, radius, learningRate));
         }
+        
+        double[] influences  = new double[nodeMap.size()];
+        int k = 0;
+        for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
+            influences[k] = Utils.getInfluence(entry.getValue(), winner, radius, learningRate);
+            k++;
+                  
+        }
+        
+        updateKernelCoefficients(learningRate, influences, input1, input2);
+        
 
         if (winner.getErrorValue() > GSOMConstants.getGT()) {
             //System.out.println("Winner "+winner.getX()+","+winner.getY()+" GT exceeded");
             adjustWinnerError(winner);
         }
+    }
+    
+    private void updateKernelCoefficients(double timeConstant, double[] influences, double[] inputs1, double[] inputs2){
+       
+        coefficients[0] += timeConstant*calcGradient(influences, inputs1, 0);
+        coefficients[1] += timeConstant*calcGradient(influences, inputs2, inputs1.length);
+    }
+    
+    private double calcGradient(double[] influences, double[] inputs, int coveredLength){
+        double gradient = 0;
+        
+        int k = 0;
+        for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
+             gradient += influences[k]*LinearKernel.LinearKernelDistance(inputs, Arrays.copyOfRange(entry.getValue().getWeights(), coveredLength, coveredLength+inputs.length), inputs.length);
+             k++;
+        }
+
+        return gradient;
+    }
+    
+    private double[] initCoeffs(){
+        double[] arr = new double[this.numberOfKernels];
+        double sum = 0;
+        for (int i = 0; i < this.numberOfKernels; i++) {
+            arr[i] = Math.random();
+            sum += arr[i];
+        }
+
+        for (int i = 0; i < this.numberOfKernels; i++)
+            arr[i] /= sum;
+
+        return arr;
     }
 
     
@@ -114,3 +185,5 @@ public class GSOMTrainer {
         return node.getErrorValue() + (GSOMConstants.FD * node.getErrorValue());
     }
 }
+
+

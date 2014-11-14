@@ -36,6 +36,30 @@ public class GSOMTester {
         }
         
     }
+    
+    
+    // Function for multiple kernels
+    public void testGSOM(Map<String,GNode> nodeMap,ArrayList<double[]> iWeights1, ArrayList<double[]> iWeights2, double[] coefs, ArrayList<String> iStrings){
+        for(int i = 0; i<iWeights1.size();i++){
+            
+            GNode winner = Utils.selectWinner(nodeMap, iWeights1.get(i), iWeights2.get(i), coefs);
+            //System.out.println("Winner for "+iStrings.get(i)+" is "+winner.getX()+","+winner.getY());
+            
+            String winnerStr = Utils.generateIndexString(winner.getX(), winner.getY());
+            GNode winnerNode = nodeMap.get(winnerStr);
+            winnerNode.setHitValue(winner.getHitValue()+1);
+            
+            if(!testResultMap.containsKey(winnerStr)){
+                testResultMap.put(winnerStr, iStrings.get(i));
+            }else{
+                String currStr = getTestResultMap().get(winnerStr);
+                String newStr = currStr +","+ iStrings.get(i);
+                testResultMap.remove(winnerStr);
+                testResultMap.put(winnerStr,newStr);
+            }
+        }
+        
+    }
 
     /**
      * @return the testResultMap
