@@ -8,6 +8,7 @@ import com.gsom.ui.MainWindow;
 
 import com.gsom.kernel.GaussianKernelL2;
 import com.gsom.kernel.LinearKernel;
+import java.util.Arrays;
 
 public class Utils {
 
@@ -147,17 +148,28 @@ public class Utils {
         if (MainWindow.distance == 5) {
             for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
                 currDist = Utils.calcMultipleLinearKernelDistance(input1, input2, entry.getValue().getWeights(), input1.length, input2.length, coefs);
+                //System.out.println(minDist + ", " + currDist);
 
                 if (currDist < minDist) {
                     winner = entry.getValue();
                     minDist = currDist;
                 }
             }
-            return winner;
+       
         }
-        
-        
-        return null;
+        if (MainWindow.distance == 6) {
+            for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
+                currDist = Utils.calcMultipleGaussianLinearDistance(input1, input2, entry.getValue().getWeights(), input1.length, input2.length, coefs);
+                //System.out.println(minDist + ", " + currDist);
+
+                if (currDist < minDist) {
+                    winner = entry.getValue();
+                    minDist = currDist;
+                }
+            }
+       
+        }  
+        return winner;
     }
 
     //---TESTED INline with the C# code---
@@ -178,14 +190,17 @@ public class Utils {
     }
     
     // Function for multiple kernels
-    public static GNode adjustNeighbourWeight(GNode node, GNode winner, double[] input1, double[] input2, double radius, double learningRate) {
+    public static GNode adjustNeighbourWeight(GNode node, GNode winner, double[] input1, double[] input2, double radius, double learningRate, double[] coefs) {
         double nodeDistSqr = Math.pow(winner.getX() - node.getX(), 2) + Math.pow(winner.getY() - node.getY(), 2);
         double radiusSqr = radius*radius;
         //if node is within the radius
         if (nodeDistSqr < radiusSqr) {
             double influence = Math.exp(-(double)nodeDistSqr / (2 * radiusSqr));
             if(MainWindow.distance==5)
-                node.adjustWeightsLinear(input1, input2, influence, learningRate);
+                node.adjustWeightsLinear(input1, input2, influence, learningRate, coefs);
+            
+            if(MainWindow.distance==6)
+                node.adjustWeightsGaussianLinear(input1, input2, influence, learningRate, coefs);
         }
         return node;
     }
@@ -256,6 +271,21 @@ public class Utils {
             int dimension1, int dimension2, double[] coefs){
 
         return LinearKernel.LinearKernelDistance(vec1, vec2, nodeWeights, dimension1, dimension2, coefs);
+    }
+    
+    public static double calcMultipleGaussianLinearDistance(double[] vec1, double[] vec2, double[] nodeWeights,
+            int dimension1, int dimension2, double[] coefs){
+        
+        double[] weights1 = Arrays.copyOfRange(nodeWeights, 0, dimension1);
+        double[] weights2 = Arrays.copyOfRange(nodeWeights, dimension1, dimension1+dimension2);
+        
+        double linearComp = coefs[0] * (LinearKernel.calcKernel(vec1, vec1, dimension1) + 
+                LinearKernel.calcKernel(weights1, weights1, dimension1) -
+                2*LinearKernel.calcKernel(vec1, weights1, dimension1));
+        
+        double gaussianComp = coefs[1] * (2 - 2*GaussianKernelL2.calcKernel(vec2, weights2, dimension2));       
+
+        return Math.sqrt(linearComp + gaussianComp);
     }
     
     public static double[] vectorSubstraction(double[] vec1, double[] vec2,

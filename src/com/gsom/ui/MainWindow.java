@@ -190,6 +190,8 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         jLabel11 = new javax.swing.JLabel();
         calcCoeffBtn = new javax.swing.JButton();
         viewMatrixBtn = new javax.swing.JButton();
+        InputFileLocationTextBox2 = new javax.swing.JTextField();
+        browseButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GSOM Train & Test Tool");
@@ -212,6 +214,12 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         statusTextArea.setColumns(20);
         statusTextArea.setRows(5);
         jScrollPane1.setViewportView(statusTextArea);
+
+        InputFileLocationTextBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InputFileLocationTextBoxActionPerformed(evt);
+            }
+        });
 
         browseButton.setText("Browse");
         browseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -316,7 +324,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(initTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -333,15 +341,14 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Advance Parameters"));
 
         jLabel8.setText("Distance");
 
-        jDistance.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Euclidean", "cosine", "chi-square", "Gaussian Kernel", "Linear Kernel", "MK Linear" }));
+        jDistance.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Euclidean", "cosine", "chi-square", "Gaussian Kernel", "Linear Kernel", "MK Linear", "MK Linear + Gaussian" }));
         jDistance.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jDistanceActionPerformed(evt);
@@ -456,22 +463,25 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             }
         });
 
+        InputFileLocationTextBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InputFileLocationTextBox2ActionPerformed(evt);
+            }
+        });
+
+        browseButton2.setText("Browse");
+        browseButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(InputFileLocationTextBox)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -485,11 +495,24 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton1))
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(14, 14, 14))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(21, 21, 21))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(InputFileLocationTextBox)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(InputFileLocationTextBox2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(browseButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))))
+                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1)
@@ -506,13 +529,18 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(browseButton)
+                            .addComponent(InputFileLocationTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(InputFileLocationTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(browseButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(InputFileLocationTextBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(browseButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -593,8 +621,10 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             distance = 3;
         }else if(jDistance.getSelectedIndex()==4){
             distance = 4;
+        }else if(jDistance.getSelectedIndex()==5){
+            distance = 5;            
         }else{
-            distance = 5;
+            distance = 6;
         }
         
         InitType initType=null;
@@ -616,7 +646,10 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             type = InputDataType.ASHES;
         }
 
-        gRun.runTraining(InputFileLocationTextBox.getText(), type);
+        if (distance==5 || distance==6)
+            gRun.runTraining(InputFileLocationTextBox.getText(), InputFileLocationTextBox2.getText(), type);
+        else
+            gRun.runTraining(InputFileLocationTextBox.getText(), type);
 
 
     }//GEN-LAST:event_trainButtonActionPerformed
@@ -715,6 +748,28 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
     private void jDistanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDistanceActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jDistanceActionPerformed
+
+    private void InputFileLocationTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InputFileLocationTextBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_InputFileLocationTextBoxActionPerformed
+
+    private void browseButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButton2ActionPerformed
+        JFileChooser chooser = new JFileChooser(".");//E:\GSOM2_v3\GSOM2
+
+        int choice = chooser.showOpenDialog(null);
+
+        if (choice != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        File chosenFile = chooser.getSelectedFile();
+        //JOptionPane.showMessageDialog(null,chosenFile.getAbsolutePath());
+        InputFileLocationTextBox2.setText(chosenFile.getAbsolutePath());
+    }//GEN-LAST:event_browseButton2ActionPerformed
+
+    private void InputFileLocationTextBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InputFileLocationTextBox2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_InputFileLocationTextBox2ActionPerformed
 
     @Override
     public void clickedOnImage(String key, ArrayList<String> values) {
@@ -942,7 +997,9 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField InputFileLocationTextBox;
+    private javax.swing.JTextField InputFileLocationTextBox2;
     private javax.swing.JButton browseButton;
+    private javax.swing.JButton browseButton2;
     private javax.swing.JTextField cCountTxt;
     private javax.swing.JButton calcCoeffBtn;
     private javax.swing.JTextField coeffTxt;

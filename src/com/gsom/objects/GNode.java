@@ -5,6 +5,7 @@ import com.gsom.util.Utils;
 
 import com.gsom.ui.MainWindow;
 import com.gsom.kernel.GaussianKernelL2;
+import java.util.Arrays;
 
 public class GNode {
 
@@ -57,6 +58,9 @@ public class GNode {
         public void calcAndUpdateErr(double[] iWeight1, double[] iWeight2, double[] coefs ){
             if (MainWindow.distance==5)
                 this.errorValue += Utils.calcMultipleLinearKernelDistance(iWeight1, iWeight2, this.weights, iWeight1.length, iWeight2.length, coefs);
+            
+            if (MainWindow.distance==6)
+                this.errorValue += Utils.calcMultipleGaussianLinearDistance(iWeight1, iWeight2, this.weights, iWeight1.length, iWeight2.length, coefs);
      	}
 	
 	public double getErrorValue() {
@@ -96,14 +100,30 @@ public class GNode {
 	}
         
         // Function for multiple kernels
-        public void adjustWeightsLinear(double[] iWeights1, double[] iWeights2, double influence,double learningRate){           
+        public void adjustWeightsLinear(double[] iWeights1, double[] iWeights2, double influence,double learningRate, double[] coefs){           
            
                 for(int i=0;i<iWeights1.length;i++){
-			weights[i] += influence*learningRate*2*(iWeights1[i] - weights[i]);
+			weights[i] += influence*learningRate*2*(iWeights1[i] - weights[i])*coefs[0];
 		}
                 
                 for(int i=iWeights1.length;i<iWeights1.length+iWeights2.length;i++){
-			weights[i] += influence*learningRate*2*(iWeights2[i] - weights[i]);
+			weights[i] += influence*learningRate*2*(iWeights2[i-iWeights1.length] - weights[i])*coefs[0];
+		}               
+
+	}
+        
+        public void adjustWeightsGaussianLinear(double[] iWeights1, double[] iWeights2, double influence, double learningRate, double[] coefs){           
+           
+                for(int i=0;i<iWeights1.length;i++){
+			weights[i] += influence*learningRate*2*(iWeights1[i] - weights[i])*coefs[0];
+		}
+                
+                double coef = influence*learningRate*
+                        (1/2*Math.pow(GSOMConstants.SIGMA_FOR_GAUSSIAN, 2))*
+                        GaussianKernelL2.calcKernel(iWeights2, Arrays.copyOfRange(weights, iWeights1.length, iWeights1.length+iWeights2.length), iWeights2.length);
+                
+                for(int i=iWeights1.length;i<iWeights1.length+iWeights2.length;i++){
+			weights[i] += coef*(iWeights2[i-iWeights1.length]-weights[i])*coefs[1];
 		}
                 
 

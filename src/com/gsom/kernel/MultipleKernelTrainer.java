@@ -52,13 +52,13 @@ public class MultipleKernelTrainer {
         
         initFourNodes(initType);	//init the map with four nodes  
         coefficients = initCoeffs();
-         for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
+        for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
             int k = 0;
             double learningRate = Utils.getLearningRate(i, nodeMap.size());
-            double radius = Utils.getRadius(i, Utils.getTimeConst());
+            double radius = Utils.getRadius(i, Utils.getTimeConst());             
             for (int j=0; j<iWeights1.size(); j++)
             {
-               trainForSingleIterAndSingleInput(i,iWeights1.get(j), iWeights2.get(j), iStrings.get(k), learningRate, radius);
+               trainForSingleIterAndSingleInput(i,iWeights1.get(j), iWeights2.get(j), iStrings.get(j), learningRate, radius);
                 k++; 
             }
          }
@@ -67,13 +67,14 @@ public class MultipleKernelTrainer {
     
     
     private void trainForSingleIterAndSingleInput(int iter, double[] input1, double[] input2, String str, double learningRate, double radius) {
+        
 
         GNode winner = Utils.selectWinner(nodeMap, input1, input2, coefficients);
 
         winner.calcAndUpdateErr(input1, input2, coefficients);
 
         for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
-            entry.setValue(Utils.adjustNeighbourWeight(entry.getValue(), winner, input1, input2, radius, learningRate));
+            entry.setValue(Utils.adjustNeighbourWeight(entry.getValue(), winner, input1, input2, radius, learningRate, coefficients));
         }
         
         double[] influences  = new double[nodeMap.size()];
@@ -95,8 +96,23 @@ public class MultipleKernelTrainer {
     
     private void updateKernelCoefficients(double timeConstant, double[] influences, double[] inputs1, double[] inputs2){
        
-        coefficients[0] += timeConstant*calcGradient(influences, inputs1, 0);
-        coefficients[1] += timeConstant*calcGradient(influences, inputs2, inputs1.length);
+        if(MainWindow.distance == 5){
+            coefficients[0] += timeConstant*calcGradient(influences, inputs1, 0);
+            coefficients[1] += timeConstant*calcGradient(influences, inputs2, inputs1.length);
+        }
+        
+        if(MainWindow.distance == 6){
+            coefficients[0] += timeConstant*calcGradient(influences, inputs1, 0);
+            coefficients[1] += timeConstant*calcGradientGaussian(influences, inputs2, inputs1.length);
+        }
+
+        //double denom  = Math.sqrt(coefficients[0]*coefficients[0] + coefficients[1]*coefficients[1]);
+        double denom = coefficients[0]+coefficients[1];
+        
+              
+        coefficients[0] = coefficients[0]/denom;
+        coefficients[1] = coefficients[1]/denom;
+        
     }
     
     private double calcGradient(double[] influences, double[] inputs, int coveredLength){
@@ -107,7 +123,17 @@ public class MultipleKernelTrainer {
              gradient += influences[k]*LinearKernel.LinearKernelDistance(inputs, Arrays.copyOfRange(entry.getValue().getWeights(), coveredLength, coveredLength+inputs.length), inputs.length);
              k++;
         }
-
+        return gradient;
+    }
+    
+    private double calcGradientGaussian(double[] influences, double[] inputs, int coveredLength){
+        double gradient = 0;
+        
+        int k = 0;
+        for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
+             gradient += influences[k]*GaussianKernelL2.calcKernel(inputs, Arrays.copyOfRange(entry.getValue().getWeights(), coveredLength, coveredLength+inputs.length), inputs.length);
+             k++;
+        }
         return gradient;
     }
     

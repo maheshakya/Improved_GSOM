@@ -49,9 +49,9 @@ public class NumericalDataParser extends InputParser{
                             System.out.println("Errorrrr      ");
                         }
 
-                        GSOMConstants.DIMENSIONS = weights.get(0).length;
+                        //GSOMConstants.DIMENSIONS = weights.get(0).length;
                         input.close();
-			super.normalizeData(weights, GSOMConstants.DIMENSIONS);
+			super.normalizeData(weights, weights.get(0).length);;
 			iListener.inputParseComplete(); //trigger inputParseComplete event
 
 		}

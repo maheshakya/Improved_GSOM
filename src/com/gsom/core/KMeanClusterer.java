@@ -21,9 +21,27 @@ public class KMeanClusterer {
     private Map<String, GNode> map;
     private int bestClusterCount;
     private ArrayList<ArrayList<GCluster>> allClusters;
+    
+    private double[] coefficients;
+    private int dimension1;
+    private int dimension2;
 
     public void runClustering(Map<String, GNode> map) {
         this.map = map;
+        ArrayList<ArrayList<GCluster>> kClusterList = new ArrayList<ArrayList<GCluster>>();
+        kClusterList.addAll(getAllClusterLists(map.size()));
+        this.bestClusterCount = getBestClusterCount(kClusterList);
+        this.allClusters = kClusterList;
+    }
+    
+    
+    // For multiple kernels
+    public void runClustering(Map<String, GNode> map, double[] coefs, int dimension1, int dimension2) {
+        this.map = map;
+        this.coefficients = coefs;
+        this.dimension1 = dimension1;
+        this.dimension2 = dimension2;
+        
         ArrayList<ArrayList<GCluster>> kClusterList = new ArrayList<ArrayList<GCluster>>();
         kClusterList.addAll(getAllClusterLists(map.size()));
         this.bestClusterCount = getBestClusterCount(kClusterList);
@@ -139,7 +157,13 @@ public class KMeanClusterer {
                     dist =  Utils.calcGausssianKernelDistance(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
                 else if (MainWindow.distance == 4)
                     dist =  Utils.calcLinearKernelDistance(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
-               
+                else if (MainWindow.distance ==5)
+                    dist =  Utils.calcMultipleLinearKernelDistance(Arrays.copyOfRange(node.getWeights(), 0, dimension1),
+                            Arrays.copyOfRange(node.getWeights(), dimension1, dimension1+dimension2), clusters.get(i).getCentroidWeights(), dimension1, dimension2, coefficients);
+                else if (MainWindow.distance ==6)
+                    dist =  Utils.calcMultipleGaussianLinearDistance(Arrays.copyOfRange(node.getWeights(), 0, dimension1),
+                            Arrays.copyOfRange(node.getWeights(), dimension1, dimension1+dimension2), clusters.get(i).getCentroidWeights(), dimension1, dimension2, coefficients);
+                
                 else
                     dist = Utils.calcEucDist(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
                 if (dist < minDist) {
@@ -197,6 +221,12 @@ public class KMeanClusterer {
             return Utils.calcGausssianKernelDistance(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
         else if(MainWindow.distance == 4)
             return Utils.calcLinearKernelDistance(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
+        else if(MainWindow.distance == 5)
+            return Utils.calcMultipleLinearKernelDistance(Arrays.copyOfRange(i.getCentroidWeights(), 0, dimension1),
+                            Arrays.copyOfRange(i.getCentroidWeights(), dimension1, dimension1+dimension2), j.getCentroidWeights(), dimension1, dimension2, coefficients);
+        else if(MainWindow.distance == 6)
+            return Utils.calcMultipleGaussianLinearDistance(Arrays.copyOfRange(i.getCentroidWeights(), 0, dimension1),
+                            Arrays.copyOfRange(i.getCentroidWeights(), dimension1, dimension1+dimension2), j.getCentroidWeights(), dimension1, dimension2, coefficients);
         else
             return Utils.calcEucDist(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
     }
