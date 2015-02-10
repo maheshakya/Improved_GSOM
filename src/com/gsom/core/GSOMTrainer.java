@@ -1,31 +1,38 @@
 package com.gsom.core;
 
+import com.gsom.enums.DeletionType;
 import com.gsom.enums.InitType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.gsom.objects.GNode;
 import com.gsom.util.GSOMConstants;
 import com.gsom.util.Utils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GSOMTrainer {
 
     private Map<String, GNode> nodeMap;
     private NodeGrowthHandler growthHandler;
     private InitType initType;
+    private DeleteBase D = null;
 
-    public GSOMTrainer(InitType initType) {
+    public GSOMTrainer(InitType initType, DeletionType deleteType) {
         this.initType = initType;
         nodeMap = new HashMap<String, GNode>();
         growthHandler = new NodeGrowthHandler();
+
+        if (deleteType == DeletionType.FBR) {
+            D = new FBR();
+        } else if (deleteType == DeletionType.ARC) {
+            D = new ARC();
+        }
     }
 
-    public Map<String,GNode> trainNetwork(ArrayList<String> iStrings, ArrayList<double[]> iWeights) {
+    public Map<String, GNode> trainNetwork(ArrayList<String> iStrings, ArrayList<double[]> iWeights) {
 //        for(int i=0; i<iWeights.size();i++)
 //            iWeights.set(i, Utils.normalizeVectorMinMax(iWeights.get(i)));
-        initFourNodes(initType);	//init the map with four nodes        
-         for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
+        initFourNodes(initType);	//init the map with four nodes
+        for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
             int k = 0;
             double learningRate = Utils.getLearningRate(i, nodeMap.size());
             double radius = Utils.getRadius(i, Utils.getTimeConst());
@@ -36,7 +43,6 @@ public class GSOMTrainer {
         }
         return nodeMap;
     }
-    
 
     private void trainForSingleIterAndSingleInput(int iter, double[] input, String str, double learningRate, double radius) {
 
@@ -52,11 +58,13 @@ public class GSOMTrainer {
             //System.out.println("Winner "+winner.getX()+","+winner.getY()+" GT exceeded");
             adjustWinnerError(winner);
         }
+
+        if (D != null) {
+            D.update(Utils.generateIndexString(winner.getX(), winner.getY()));
+        }
     }
 
-    
-
-    //Initialization of the map. 
+    //Initialization of the map.
     //this will create 4 nodes with random weights
     private void initFourNodes(InitType type) {
         if (type == InitType.RANDOM) {
@@ -64,15 +72,22 @@ public class GSOMTrainer {
                 for (int j = 0; j < 2; j++) {
                     GNode initNode = new GNode(i, j, Utils.generateRandomArray(GSOMConstants.DIMENSIONS));
                     nodeMap.put(Utils.generateIndexString(i, j), initNode);
+                    if (D != null) {
+                        D.update(Utils.generateIndexString(i, j));
+                    }
                 }
             }
         } else if (type == InitType.LINEAR) {
             double initVal = 0.1;
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 2; j++) {
-                    GNode initNode = new GNode(i, j, Utils.generateLinearArray(GSOMConstants.DIMENSIONS,initVal));
+                    GNode initNode = new GNode(i, j, Utils.generateLinearArray(GSOMConstants.DIMENSIONS, initVal));
                     nodeMap.put(Utils.generateIndexString(i, j), initNode);
                     initVal += 0.1;
+
+                    if (D != null) {
+                        D.update(Utils.generateIndexString(i, j));
+                    }
                 }
             }
         }
@@ -98,7 +113,6 @@ public class GSOMTrainer {
             growthHandler.growNodes(nodeMap, winner); //NodeGrowthHandler takes over
         }
     }
-
 
     //distributing error to the neighbors of thw winning node
     private void distrErrToNeighbors(GNode winner, String leftK, String rightK, String topK, String bottomK) {

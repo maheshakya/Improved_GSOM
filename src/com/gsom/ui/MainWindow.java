@@ -5,6 +5,7 @@
 package com.gsom.ui;
 
 import com.gsom.core.GSOMRun;
+import com.gsom.enums.DeletionType;
 import com.gsom.enums.InitType;
 import com.gsom.enums.InputDataType;
 import com.gsom.listeners.GSOMRunListener;
@@ -17,9 +18,6 @@ import com.gsom.ui.image_ui.listeners.ImageNetworkControllerListener;
 import com.gsom.util.GFileHandler;
 import com.gsom.util.GSOMConstants;
 import com.gsom.util.Utils;
-//import com.sun.image.codec.jpeg.JPEGCodec;
-//import com.sun.image.codec.jpeg.JPEGEncodeParam;
-//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -29,11 +27,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
-import java.util.logging.FileHandler;
-import javax.swing.*;
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -45,8 +45,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.util.ShapeUtilities;
-
-import javax.imageio.*;
 
 /**
  *
@@ -109,7 +107,6 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             rgb[i] = 0;
         }
 
-
         return plotColors;
     }
 
@@ -134,9 +131,9 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
     }
 
     protected static BufferedImage draw(JFreeChart chart, int width, int height) {
-        BufferedImage img =
-                new BufferedImage(width, height,
-                BufferedImage.TYPE_INT_RGB);
+        BufferedImage img
+                = new BufferedImage(width, height,
+                        BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = img.createGraphics();
 
         chart.draw(g2, new Rectangle2D.Double(0, 0, width, height));
@@ -175,6 +172,8 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
         jTextField5 = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        nodeDeletionCombo = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jDistance = new javax.swing.JComboBox();
@@ -288,18 +287,23 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             }
         });
 
+        jLabel13.setText("Node deletion");
+
+        nodeDeletionCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "FBR", "ARC", "Fritzke" }));
+        nodeDeletionCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nodeDeletionComboActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(initTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1))
@@ -310,15 +314,25 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(initTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nodeDeletionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -327,7 +341,9 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(initTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(initTypeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nodeDeletionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -494,8 +510,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                                 .addComponent(plotMapBtn)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton1))
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(14, 14, 14))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
@@ -503,15 +518,18 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(InputFileLocationTextBox)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(InputFileLocationTextBox2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(browseButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(InputFileLocationTextBox)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(InputFileLocationTextBox2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(browseButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -536,13 +554,13 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(browseButton)
                             .addComponent(InputFileLocationTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(InputFileLocationTextBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -565,21 +583,21 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void populateClusterDataList(Map<String,String> testResultMap,ArrayList<GCluster> clusterList,ArrayList<String> clusterDataList) {
+    private void populateClusterDataList(Map<String, String> testResultMap, ArrayList<GCluster> clusterList, ArrayList<String> clusterDataList) {
         int i = 1;
 
         for (GCluster cluster : clusterList) {
-            
+
             ArrayList<GNode> cNodeList = cluster.getcNodes();
             /*Collections.sort(cNodeList,new Comparator<GNode>(){
-                @Override
-                public int compare(GNode o1, GNode o2) {
-                    return o1.getHitValue()-o2.getHitValue();
-                }
-            });*/
-            String clusterDataStr = cluster.getX()+","
-                    + cluster.getY()+ ":";
-            
+             @Override
+             public int compare(GNode o1, GNode o2) {
+             return o1.getHitValue()-o2.getHitValue();
+             }
+             });*/
+            String clusterDataStr = cluster.getX() + ","
+                    + cluster.getY() + ":";
+
             for (int j = 0; j < cNodeList.size(); j++) {
                 GNode node = cNodeList.get(j);
                 if (testResultMap.containsKey(Utils.generateIndexString(node.getX(), node.getY()))) {
@@ -597,11 +615,11 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         }
     }
 
-    private void populateNodeDataList(Map<String,String> testResultMap, ArrayList<String> nodeDataList) {
+    private void populateNodeDataList(Map<String, String> testResultMap, ArrayList<String> nodeDataList) {
         for (Map.Entry<String, String> entry : testResultMap.entrySet()) {
             nodeDataList.add(entry.getKey() + ":" + entry.getValue());
         }
-        
+
     }
 
     private void trainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainButtonActionPerformed
@@ -610,30 +628,41 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         GSOMConstants.MAX_NEIGHBORHOOD_RADIUS = Double.parseDouble(jTextField2.getText());
         GSOMConstants.START_LEARNING_RATE = Double.parseDouble(jTextField4.getText());
         GSOMConstants.MAX_ITERATIONS = Integer.parseInt(jTextField5.getText());
-        
+
         if (jDistance.getSelectedIndex() == 0) {
             distance = 0;
-        } else if(jDistance.getSelectedIndex()==1){
+        } else if (jDistance.getSelectedIndex() == 1) {
             distance = 1;
-        } else if(jDistance.getSelectedIndex()==2){
+        } else if (jDistance.getSelectedIndex() == 2) {
             distance = 2;
-        }else if(jDistance.getSelectedIndex()==3){
+        } else if (jDistance.getSelectedIndex() == 3) {
             distance = 3;
-        }else if(jDistance.getSelectedIndex()==4){
+        } else if (jDistance.getSelectedIndex() == 4) {
             distance = 4;
-        }else if(jDistance.getSelectedIndex()==5){
-            distance = 5;            
-        }else{
+        } else if (jDistance.getSelectedIndex() == 5) {
+            distance = 5;
+        } else {
             distance = 6;
         }
-        
-        InitType initType=null;
-        if(initTypeCombo.getSelectedIndex()==0){
-        initType = InitType.RANDOM;
-        }else if(initTypeCombo.getSelectedIndex()==1){
+
+        DeletionType deletionType = null;
+        if (nodeDeletionCombo.getSelectedIndex() == 0) {
+            deletionType = DeletionType.None;
+        } else if (nodeDeletionCombo.getSelectedIndex() == 1) {
+            deletionType = DeletionType.FBR;
+        } else if (nodeDeletionCombo.getSelectedIndex() == 2) {
+            deletionType = DeletionType.ARC;
+        } else if (nodeDeletionCombo.getSelectedIndex() == 3) {
+            deletionType = DeletionType.Fritzke;
+        }
+
+        InitType initType = null;
+        if (initTypeCombo.getSelectedIndex() == 0) {
+            initType = InitType.RANDOM;
+        } else if (initTypeCombo.getSelectedIndex() == 1) {
             initType = InitType.LINEAR;
         }
-        gRun = new GSOMRun(initType,this);
+        gRun = new GSOMRun(initType, deletionType, this);
 
         InputDataType type = InputDataType.NUMERICAL;
 
@@ -646,16 +675,16 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             type = InputDataType.ASHES;
         }
 
-        if (distance==5 || distance==6)
+        if (distance == 5 || distance == 6) {
             gRun.runTraining(InputFileLocationTextBox.getText(), InputFileLocationTextBox2.getText(), type);
-        else
+        } else {
             gRun.runTraining(InputFileLocationTextBox.getText(), type);
-
+        }
 
     }//GEN-LAST:event_trainButtonActionPerformed
 
     private void plotMapBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotMapBtnActionPerformed
-        int cCount = Integer.parseInt(cCountTxt.getText())-2;
+        int cCount = Integer.parseInt(cCountTxt.getText()) - 2;
         createTheXYPlot(gRun.getGSOMMap(), gRun.getTestResultMap(), gRun.getAllClusters().get(cCount));
     }//GEN-LAST:event_plotMapBtnActionPerformed
 
@@ -707,18 +736,18 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
 
     private void saveDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveDataActionPerformed
         Map<String, String> testResultMap = gRun.getTestResultMap();
-        
+
         nodeDataList = new ArrayList<String>();
-        populateNodeDataList(testResultMap,nodeDataList);
-        
+        populateNodeDataList(testResultMap, nodeDataList);
+
         clusterDataList = new ArrayList<String>();
         ArrayList<ArrayList<GCluster>> clusterList = gRun.getAllClusters();
         int cCount = Integer.parseInt(cCountTxt.getText());
-        int cListIdx = cCount-2;
-        if(cListIdx > clusterList.size()-1){
-            JOptionPane.showMessageDialog(null, "Enter a number less than "+(clusterList.size()+2));
-        }else{
-            populateClusterDataList(testResultMap,clusterList.get(cListIdx),clusterDataList);
+        int cListIdx = cCount - 2;
+        if (cListIdx > clusterList.size() - 1) {
+            JOptionPane.showMessageDialog(null, "Enter a number less than " + (clusterList.size() + 2));
+        } else {
+            populateClusterDataList(testResultMap, clusterList.get(cListIdx), clusterDataList);
             GFileHandler.writeFile("ClusterData.txt", clusterDataList);
             GFileHandler.writeFile("NodeData.txt", nodeDataList);
         }
@@ -726,18 +755,18 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
 
     private void calcCoeffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcCoeffBtnActionPerformed
         int cCount = Integer.parseInt(cCountTxt.getText());
-        coeffTxt.setText(gRun.getSilCoeff(cCount)+"");
+        coeffTxt.setText(gRun.getSilCoeff(cCount) + "");
     }//GEN-LAST:event_calcCoeffBtnActionPerformed
 
     private void viewMatrixBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewMatrixBtnActionPerformed
         JFrame matrixf = new JFrame();
-        matrixf.setSize(800,500);
+        matrixf.setSize(800, 500);
         EucDistOccMat matCal = new EucDistOccMat();
-        JTable table = matCal.generateMatrix(gRun.getGSOMMap(),GSOMConstants.DIMENSIONS);
+        JTable table = matCal.generateMatrix(gRun.getGSOMMap(), GSOMConstants.DIMENSIONS);
         JScrollPane scroll = new JScrollPane(table);
-        scroll.setSize(750,480);
+        scroll.setSize(750, 480);
         matrixf.getContentPane().add(scroll);
-        
+
         matrixf.setVisible(true);
     }//GEN-LAST:event_viewMatrixBtnActionPerformed
 
@@ -771,6 +800,10 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         // TODO add your handling code here:
     }//GEN-LAST:event_InputFileLocationTextBox2ActionPerformed
 
+    private void nodeDeletionComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeDeletionComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nodeDeletionComboActionPerformed
+
     @Override
     public void clickedOnImage(String key, ArrayList<String> values) {
         sNodeController = new SingleNodeImageController();
@@ -800,12 +833,12 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
 
     private ArrayList<String> nodeDataList;
     private ArrayList<String> clusterDataList;
-    
+
     @Override
     public void executionCompleted() {
-        
-        cCountTxt.setText((gRun.getBestCount()+ 2)+"");
-        maxCountLbl.setText(gRun.getAllClusters().size()+1+"");
+
+        cCountTxt.setText((gRun.getBestCount() + 2) + "");
+        maxCountLbl.setText(gRun.getAllClusters().size() + 1 + "");
     }
 
     /**
@@ -851,7 +884,6 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         });
     }
 
-
     private void createTheXYPlot(Map<String, GNode> map, final Map<String, String> testResults, ArrayList<GCluster> clusters) {
         ArrayList<Color> plotColors = getColorArray(12);
 
@@ -882,13 +914,12 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
          * node.getY()))){ nonHitSeries.add(node.getX(),node.getY()); } }
          * seriesSet.add(nonHitSeries);
          */
-
         int idx = 0;
         for (GCluster cluster : clusters) {
             XYSeries temp = new XYSeries("cluster" + idx);
             for (GNode node : cluster.getcNodes()) {
                 //if(testResults.containsKey(Utils.generateIndexString(node.getX(), node.getY()))){
-                    temp.add(node.getX(), node.getY());
+                temp.add(node.getX(), node.getY());
                 //}
             }
             seriesSet.add(temp);
@@ -901,34 +932,27 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         }
 
         //XYDataset nonHitDataset = new XYSeriesCollection(nonHitSeries);
-
         JFreeChart chart = ChartFactory.createScatterPlot("GSOM Network", "X", "Y", null, PlotOrientation.HORIZONTAL, false, true, false);
 
         XYPlot plot = (XYPlot) chart.getPlot();
-
-
-
 
         for (int j = 0; j < dataset.size(); j++) {
 
             XYLineAndShapeRenderer rend = new XYLineAndShapeRenderer();
             rend.setBaseToolTipGenerator(tipGen);
             rend.setBaseLinesVisible(false);
-            //rend.setSeriesPaint(0, plotColors.get(j));            
-            //rend.setSeriesPaint(1, plotColors.get(j));            
+            //rend.setSeriesPaint(0, plotColors.get(j));
+            //rend.setSeriesPaint(1, plotColors.get(j));
             rend.setSeriesShape(0, ShapeUtilities.createDiagonalCross(3, .3f));
             plot.setDataset(j, dataset.get(j));
             plot.setRenderer(j, rend);
 
-
         }
-
 
 //        ChartPanel chartpanel = new ChartPanel(chart, false, false, false, false, false);
 //        chartpanel.addMouseListener(chartpanel);
         //plot.setDataset(1,nonHitDataset);
         //plot.setRenderer(1,nonHitRend);
-
         ChartFrame cFrame = new ChartFrame("GSOM Network", chart);
         cFrame.setSize(450, 500);
         cFrame.setVisible(true);
@@ -988,7 +1012,6 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         cFrame.setSize(450, 500);
         cFrame.setVisible(true);
 
-
         try {
             saveToFile(chart, "e:/test1.jpg", 450, 500, 100);
         } catch (Exception e) {
@@ -1011,6 +1034,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1029,6 +1053,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JLabel maxCountLbl;
+    private javax.swing.JComboBox nodeDeletionCombo;
     private javax.swing.JButton plotMapBtn;
     private javax.swing.JButton saveData;
     private javax.swing.JTextArea statusTextArea;
