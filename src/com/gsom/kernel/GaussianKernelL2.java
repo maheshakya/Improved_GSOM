@@ -13,7 +13,7 @@ package com.gsom.kernel;
 import com.gsom.util.Utils;
 import com.gsom.util.GSOMConstants;
 
-public class GaussianKernelL2 {
+public class GaussianKernelL2  implements Kernel{
     
     public static double vectorSquaredMagnitude(double[] vect1, double[] vect2, int dimension){
         double result = 0;
@@ -45,11 +45,20 @@ public class GaussianKernelL2 {
         
         return coefs[0]*kernel1 + coefs[1]*kernel2;
     }
-    
-    public static double gaussianKernelDistance(double[] vect1, double[] vect2, double[] nodeWeights, int dimension1, int dimension2, double[] coefs){
+    public static double kernelDistance(double[] vect1, double[] vect2, double[] nodeWeights, int dimension1, int dimension2, double[] coefs){
         // sqrt(2* ( sum_of_coefficients - global kernel ) )
         return Math.sqrt(2*((coefs[0] + coefs[1])-calcKernel(vect1, vect2, nodeWeights, dimension1, dimension2, coefs)));
     }   
+
+    @Override
+    public void calcKernel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void kernelDistance() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     
 }

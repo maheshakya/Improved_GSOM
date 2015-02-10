@@ -163,9 +163,9 @@ public class KMeanClusterer {
                 else if (MainWindow.distance ==6)
                     dist =  Utils.calcMultipleGaussianLinearDistance(Arrays.copyOfRange(node.getWeights(), 0, dimension1),
                             Arrays.copyOfRange(node.getWeights(), dimension1, dimension1+dimension2), clusters.get(i).getCentroidWeights(), dimension1, dimension2, coefficients);
-                
                 else
                     dist = Utils.calcEucDist(node.getWeights(), clusters.get(i).getCentroidWeights(), GSOMConstants.DIMENSIONS);
+//                dist = Utils.calcNodeInterDistance(node.getX(), node.getY(), clusters.get(i).getX(), clusters.get(i).getY());
                 if (dist < minDist) {
                     minIdx = i;
                     minDist = dist;
@@ -229,6 +229,8 @@ public class KMeanClusterer {
                             Arrays.copyOfRange(i.getCentroidWeights(), dimension1, dimension1+dimension2), j.getCentroidWeights(), dimension1, dimension2, coefficients);
         else
             return Utils.calcEucDist(i.getCentroidWeights(), j.getCentroidWeights(), GSOMConstants.DIMENSIONS);
+        
+//        return Utils.calcNodeInterDistance(i.getX(), i.getY(), j.getX(), j.getY());
     }
 
     //returns a string that identifies 2 clusters together
@@ -247,7 +249,11 @@ public class KMeanClusterer {
 
         for (int j = 0; j < clusters.size(); j++) {
             if (j != i) {
-                RIJs.add((clusters.get(i).getSI() + clusters.get(j).getSI()) / allMIJs.get(getMIJIndex(i, j)));
+                // For multiple kernels
+                if(MainWindow.distance == 5 || MainWindow.distance == 6)
+                    RIJs.add((clusters.get(i).getSI(dimension1, dimension2, coefficients) + clusters.get(j).getSI(dimension1, dimension2, coefficients)) / allMIJs.get(getMIJIndex(i, j)));
+                else
+                    RIJs.add((clusters.get(i).getSI() + clusters.get(j).getSI()) / allMIJs.get(getMIJIndex(i, j)));
             }
         }
 

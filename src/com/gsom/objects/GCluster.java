@@ -8,6 +8,9 @@ import com.gsom.util.GSOMConstants;
 import com.gsom.util.Utils;
 import java.util.ArrayList;
 
+import com.gsom.ui.MainWindow;
+import java.util.Arrays;
+
 
 /**
  *
@@ -36,7 +39,31 @@ public class GCluster {
     public double getSI() {
         double SI2 = 0;
         for (GNode node : cNodes) {
-            SI2 += Math.pow(Utils.calcEucDist(node.getWeights(), centroidWeights, GSOMConstants.DIMENSIONS), 2);
+//            if (MainWindow.distance == 3)
+//                SI2 += Math.pow(Utils.calcGausssianKernelDistance(node.getWeights(), centroidWeights, GSOMConstants.DIMENSIONS), 2);
+//            if (MainWindow.distance == 4)
+//                SI2 += Math.pow(Utils.calcLinearKernelDistance(node.getWeights(), centroidWeights, GSOMConstants.DIMENSIONS), 2);
+//            
+//            else
+//                SI2 += Math.pow(Utils.calcEucDist(node.getWeights(), centroidWeights, GSOMConstants.DIMENSIONS), 2);
+            SI2 = Utils.calcNodeInterDistance(node.getX(), node.getY(), this.x, this.y);
+        }
+
+        return Math.sqrt(SI2 / cNodes.size());
+    }
+    
+    // For multiple kernels
+    public double getSI(int dimension1, int dimension2, double[] coefficients) {
+        double SI2 = 0;
+        for (GNode node : cNodes) {
+//            if(MainWindow.distance == 6)
+//                SI2 += Math.pow(Utils.calcMultipleGaussianLinearDistance(Arrays.copyOfRange(node.getWeights(), 0, dimension1),
+//                            Arrays.copyOfRange(node.getWeights(), dimension1, dimension1+dimension2), centroidWeights, dimension1, dimension2, coefficients), 2);
+//            if(MainWindow.distance == 5)
+//                SI2 += Math.pow(Utils.calcMultipleLinearKernelDistance(Arrays.copyOfRange(node.getWeights(), 0, dimension1),
+//                            Arrays.copyOfRange(node.getWeights(), dimension1, dimension1+dimension2), centroidWeights, dimension1, dimension2, coefficients), 2);
+            SI2 = Utils.calcNodeInterDistance(node.getX(), node.getY(), this.x, this.y);
+
         }
 
         return Math.sqrt(SI2 / cNodes.size());

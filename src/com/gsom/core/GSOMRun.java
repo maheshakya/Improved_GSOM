@@ -103,7 +103,7 @@ public class GSOMRun implements InputParsedListener{
         GSOMConstants.FD = GSOMConstants.SPREAD_FACTOR/GSOMConstants.DIMENSIONS;
         
         if (MainWindow.distance == 5 || MainWindow.distance == 6){
-            map = mkTrainer.trainNetwork(parser.getStrForWeights(), parser.getWeights(), parser2.getWeights());
+            map = mkTrainer.trainNetwork(parser2.getStrForWeights(), parser.getWeights(), parser2.getWeights());
             listener.stepCompleted("GSOM Training completed!");
             
             double[] coefficients = mkTrainer.getCoefficients();
@@ -138,7 +138,7 @@ public class GSOMRun implements InputParsedListener{
                 System.err.println(e);
             }
 
-            tester.testGSOM(map, parser.getWeights(), parser2.getWeights(), coefficients, parser.getStrForWeights());
+            tester.testGSOM(map, parser.getWeights(), parser2.getWeights(), coefficients, parser2.getStrForWeights());
             this.testResults = tester.getTestResultMap();
 
             clusterer.runClustering(map, coefficients, dimension1, dimension1);

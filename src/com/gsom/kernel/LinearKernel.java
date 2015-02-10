@@ -13,7 +13,7 @@ import java.util.Arrays;
  *
  * @author maheshakya
  */
-public class LinearKernel {
+public class LinearKernel implements Kernel{
     
     public static double calcKernel(double[] vect1, double[] nodeWeights, int dimension)
     {
@@ -24,7 +24,7 @@ public class LinearKernel {
         return result;
     }
     
-    public static double LinearKernelDistance(double[] vect1, double[] nodeWeights, int dimension){
+    public static double kernelDistance(double[] vect1, double[] nodeWeights, int dimension){
         double ker1 = calcKernel(vect1, vect1, dimension);
         double ker2 = calcKernel(nodeWeights, nodeWeights, dimension);
         double ker3 = calcKernel(vect1, nodeWeights, dimension);
@@ -71,4 +71,14 @@ public class LinearKernel {
         return res;
 
     }   
+
+    @Override
+    public void calcKernel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void kernelDistance() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

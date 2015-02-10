@@ -51,7 +51,7 @@ public class MultipleKernelTrainer {
 //            iWeights.set(i, Utils.normalizeVectorMinMax(iWeights.get(i)));
         
         initFourNodes(initType);	//init the map with four nodes  
-        coefficients = initCoeffs();
+        coefficients = initKernelCoeffs();
         for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
             int k = 0;
             double learningRate = Utils.getLearningRate(i, nodeMap.size());
@@ -97,12 +97,12 @@ public class MultipleKernelTrainer {
     private void updateKernelCoefficients(double timeConstant, double[] influences, double[] inputs1, double[] inputs2){
        
         if(MainWindow.distance == 5){
-            coefficients[0] += timeConstant*calcGradient(influences, inputs1, 0);
-            coefficients[1] += timeConstant*calcGradient(influences, inputs2, inputs1.length);
+            coefficients[0] += timeConstant*calcGradientLinear(influences, inputs1, 0);
+            coefficients[1] += timeConstant*calcGradientLinear(influences, inputs2, inputs1.length);
         }
         
         if(MainWindow.distance == 6){
-            coefficients[0] += timeConstant*calcGradient(influences, inputs1, 0);
+            coefficients[0] += timeConstant*calcGradientLinear(influences, inputs1, 0);
             coefficients[1] += timeConstant*calcGradientGaussian(influences, inputs2, inputs1.length);
         }
 
@@ -115,12 +115,12 @@ public class MultipleKernelTrainer {
         
     }
     
-    private double calcGradient(double[] influences, double[] inputs, int coveredLength){
+    private double calcGradientLinear(double[] influences, double[] inputs, int coveredLength){
         double gradient = 0;
         
         int k = 0;
         for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
-             gradient += influences[k]*LinearKernel.LinearKernelDistance(inputs, Arrays.copyOfRange(entry.getValue().getWeights(), coveredLength, coveredLength+inputs.length), inputs.length);
+             gradient += influences[k]*LinearKernel.kernelDistance(inputs, Arrays.copyOfRange(entry.getValue().getWeights(), coveredLength, coveredLength+inputs.length), inputs.length);
              k++;
         }
         return gradient;
@@ -137,16 +137,27 @@ public class MultipleKernelTrainer {
         return gradient;
     }
     
-    private double[] initCoeffs(){
+    private double[] initKernelCoeffs(){
         double[] arr = new double[this.numberOfKernels];
         double sum = 0;
+        String coefs = "";
         for (int i = 0; i < this.numberOfKernels; i++) {
             arr[i] = Math.random();
             sum += arr[i];
         }
 
-        for (int i = 0; i < this.numberOfKernels; i++)
+        for (int i = 0; i < this.numberOfKernels; i++){
             arr[i] /= sum;
+            
+            ///----------------TEST----------------------///
+            coefs += String.valueOf(arr[i] + " ");
+        }
+        
+        ///------------SECRET TEST-----------------------///
+//        for(int i = 0; i < this.numberOfKernels; i++)
+//            arr[i] = 1.0/this.numberOfKernels;
+        
+        System.out.println("Kernel Coefficients: " + coefs);
 
         return arr;
     }
@@ -161,6 +172,13 @@ public class MultipleKernelTrainer {
                 for (int j = 0; j < 2; j++) {
                     GNode initNode = new GNode(i, j, Utils.generateRandomArray(GSOMConstants.DIMENSIONS));
                     nodeMap.put(Utils.generateIndexString(i, j), initNode);
+                    ///-------------- TEST --------------------///
+                    String nodeWeights = "";
+                    for(int k = 0 ; k < initNode.getWeights().length; k++)
+                        nodeWeights += String.valueOf(initNode.getWeights()[k]) + " ";
+                    
+                    System.out.println("Node Weights: " + nodeWeights);
+                    ///-----------------------------------------///
                 }
             }
         } else if (type == InitType.LINEAR) {

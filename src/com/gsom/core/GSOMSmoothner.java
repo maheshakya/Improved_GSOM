@@ -131,7 +131,7 @@ public class GSOMSmoothner {
         
         int k = 0;
         for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
-             gradient += influences[k]*LinearKernel.LinearKernelDistance(inputs, Arrays.copyOfRange(entry.getValue().getWeights(), coveredLength, coveredLength+inputs.length), inputs.length);
+             gradient += influences[k]*LinearKernel.kernelDistance(inputs, Arrays.copyOfRange(entry.getValue().getWeights(), coveredLength, coveredLength+inputs.length), inputs.length);
              k++;
         }
 

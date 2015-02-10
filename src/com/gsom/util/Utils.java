@@ -264,7 +264,7 @@ public class Utils {
     public static double calcLinearKernelDistance(double[] vec1, double[] vec2,
             int dimensions){
 
-        return LinearKernel.LinearKernelDistance(vec1, vec2, dimensions);
+        return LinearKernel.kernelDistance(vec1, vec2, dimensions);
     }
     
     public static double calcMultipleLinearKernelDistance(double[] vec1, double[] vec2, double[] nodeWeights,
@@ -338,5 +338,18 @@ public class Utils {
         }
         return vec;
     
+    }
+    // For GNodes
+    public static double calcNodeInterDistance(GNode gNode1, GNode gNode2){
+        // Squared distance is returned for performance.
+        double distance = Math.pow(gNode1.getX()-gNode2.getX(), 2) + Math.pow(gNode1.getY()-gNode2.getY(), 2);        
+        return distance;
+    }
+    
+    // For coordinates
+    public static double calcNodeInterDistance(double x1, double y1, double x2, double y2){
+        // Squared distance is returned for performance.
+        double distance = Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2);        
+        return distance;
     }
 }
