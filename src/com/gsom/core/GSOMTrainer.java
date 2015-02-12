@@ -134,6 +134,7 @@ public class GSOMTrainer {
     }
 
     private void initFourNodes(ArrayList<double[]> iweights) {
+
         double[][] input = new double[iweights.size()][iweights.get(0).length];
         for (int i = 0; i < iweights.size(); i++) {
             for (int j = 0; j < iweights.get(0).length; j++) {

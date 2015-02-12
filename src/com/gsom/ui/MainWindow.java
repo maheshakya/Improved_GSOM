@@ -9,7 +9,6 @@ import com.gsom.enums.DeletionType;
 import com.gsom.enums.InitType;
 import com.gsom.enums.InputDataType;
 import com.gsom.listeners.GSOMRunListener;
-import com.gsom.nodes.EucDistOccMat;
 import com.gsom.objects.GCluster;
 import com.gsom.objects.GNode;
 import com.gsom.ui.image_ui.ImageNetworkController;
@@ -30,10 +29,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -727,7 +723,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         } else if (initTypeCombo.getSelectedIndex() == 1) {
             initType = InitType.LINEAR;
         } else {
-            distance = 2;
+            initType = InitType.PCA;
         }
 
         gRun = new GSOMRun(initType, deletionType, this);
