@@ -195,7 +195,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
         trainButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("GSOM Train & Test Tool");
+        setTitle("Multiple Kernel GSOM Trainer");
         setResizable(false);
 
         statusTextArea.setColumns(20);
