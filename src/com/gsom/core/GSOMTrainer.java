@@ -53,6 +53,8 @@ public class GSOMTrainer {
 
         GNode winner = Utils.selectWinner(nodeMap, input);
 
+        nodeMap.get(Utils.generateIndexString(winner.getX(), winner.getY())).setK_iterate(iter);
+
         winner.calcAndUpdateErr(input);
 
         for (Map.Entry<String, GNode> entry : nodeMap.entrySet()) {
