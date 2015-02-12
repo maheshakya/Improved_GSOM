@@ -3,6 +3,7 @@ package com.gsom.core;
 import com.gsom.enums.DeletionType;
 import com.gsom.enums.InitType;
 import com.gsom.objects.GNode;
+import com.gsom.util.Data;
 import com.gsom.util.GSOMConstants;
 import com.gsom.util.Utils;
 import java.util.ArrayList;
@@ -31,7 +32,11 @@ public class GSOMTrainer {
     public Map<String, GNode> trainNetwork(ArrayList<String> iStrings, ArrayList<double[]> iWeights) {
 //        for(int i=0; i<iWeights.size();i++)
 //            iWeights.set(i, Utils.normalizeVectorMinMax(iWeights.get(i)));
-        initFourNodes(initType);	//init the map with four nodes
+        if (initType == InitType.PCA) {
+            initFourNodes(iWeights);
+        } else {
+            initFourNodes(initType);	//init the map with four nodes
+        }
         for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
             int k = 0;
             double learningRate = Utils.getLearningRate(i, nodeMap.size());
@@ -126,5 +131,25 @@ public class GSOMTrainer {
     //error calculating equation for neighbours of a winner
     private double calcErrForNeighbour(GNode node) {
         return node.getErrorValue() + (GSOMConstants.FD * node.getErrorValue());
+    }
+
+    private void initFourNodes(ArrayList<double[]> iweights) {
+        double[][] input = new double[iweights.size()][iweights.get(0).length];
+        for (int i = 0; i < iweights.size(); i++) {
+            for (int j = 0; j < iweights.get(0).length; j++) {
+                input[i][j] = iweights.get(i)[j];
+            }
+        }
+
+        double[][] scores = Data.PCANIPALS(input, 4);
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                GNode initNode = new GNode(i, j, scores[2 * i + j]);
+                nodeMap.put(Utils.generateIndexString(i, j), initNode);
+                if (D != null) {
+                    D.update(Utils.generateIndexString(i, j));
+                }
+            }
+        }
     }
 }

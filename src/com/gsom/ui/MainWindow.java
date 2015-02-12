@@ -248,7 +248,7 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
 
         jLabel5.setText("ITR");
 
-        initTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Random", "Linear" }));
+        initTypeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Random", "Linear", "PCA" }));
 
         jLabel9.setText("Initialization");
 
@@ -661,7 +661,10 @@ public class MainWindow extends javax.swing.JFrame implements GSOMRunListener, I
             initType = InitType.RANDOM;
         } else if (initTypeCombo.getSelectedIndex() == 1) {
             initType = InitType.LINEAR;
+        } else {
+            distance = 2;
         }
+
         gRun = new GSOMRun(initType, deletionType, this);
 
         InputDataType type = InputDataType.NUMERICAL;

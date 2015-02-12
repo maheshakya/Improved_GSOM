@@ -9,5 +9,6 @@ package com.gsom.enums;
  * @author Thush
  */
 public enum InitType {
-    RANDOM,LINEAR;
+
+    RANDOM, LINEAR, PCA;
 }
