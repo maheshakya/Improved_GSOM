@@ -32,13 +32,13 @@ public class GSOMTrainer {
     }
 
     public Map<String, GNode> trainNetwork(ArrayList<String> iStrings, ArrayList<double[]> iWeights) {
-//        for(int i=0; i<iWeights.size();i++)
-//            iWeights.set(i, Utils.normalizeVectorMinMax(iWeights.get(i)));
+
         if (initType == InitType.PCA) {
             initFourNodes(iWeights);
         } else {
             initFourNodes(initType);	//init the map with four nodes
         }
+
         for (int i = 0; i < GSOMConstants.MAX_ITERATIONS; i++) {
             int k = 0;
             double learningRate = Utils.getLearningRate(i, nodeMap.size());

@@ -56,4 +56,7 @@ public class FBR extends DeleteBase {
         }
     }
 
+    public int get_Size() {
+        return T.size();
+    }
 }

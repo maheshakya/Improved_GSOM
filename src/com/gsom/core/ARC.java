@@ -46,4 +46,7 @@ public class ARC extends DeleteBase {
         }
     }
 
+    public int get_Size() {
+        return L1.size();
+    }
 }
