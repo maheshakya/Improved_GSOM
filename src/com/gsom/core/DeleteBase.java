@@ -14,6 +14,16 @@ import java.util.Map;
  */
 public abstract class DeleteBase {
 
+    protected int iter = 0;
+
+    public void set_itr(int iteration) {
+        iter = iteration;
+    }
+
+    public int get_itr() {
+        return iter;
+    }
+
     abstract void update(String Coordinate);
 
     abstract void adjust(Map<String, GNode> nodeMap);

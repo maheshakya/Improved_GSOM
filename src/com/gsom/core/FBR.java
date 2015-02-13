@@ -37,20 +37,22 @@ public class FBR extends DeleteBase {
 
     @Override
     void adjust(Map<String, GNode> nodeMap) {
-        int min = Integer.MAX_VALUE;
-        int i_ = 0;
+        if (nodeMap.size() > 4) {
+            int min = Integer.MAX_VALUE;
+            int i_ = 0;
 
-        if (T.size() > 4) {
-            for (int i = T.size() - 1; i > 2 * T.size() / 3; i--) {
-                if (freq.get(T.get(i)) < min) {
-                    min = freq.get(T.get(i));
-                    i_ = i;
+            if (T.size() > 4) {
+                for (int i = T.size() - 1; i > 2 * T.size() / 3; i--) {
+                    if (freq.get(T.get(i)) < min) {
+                        min = freq.get(T.get(i));
+                        i_ = i;
+                    }
                 }
-            }
 
-            nodeMap.remove(T.get(i_));
-            freq.remove(T.get(i_));
-            T.remove(i_);
+                nodeMap.remove(T.get(i_));
+                freq.remove(T.get(i_));
+                T.remove(i_);
+            }
         }
     }
 

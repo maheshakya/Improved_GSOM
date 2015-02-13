@@ -35,12 +35,14 @@ public class ARC extends DeleteBase {
 
     @Override
     void adjust(Map<String, GNode> nodeMap) {
-        if (L1.size() > L2.size()) {
-            nodeMap.remove(L1.get(L1.size() - 1));
-            L1.remove(L1.size() - 1);
-        } else {
-            nodeMap.remove(L1.get(L1.size() - 1));
-            L2.remove(L2.size() - 1);
+        if (nodeMap.size() > 4) {
+            if (L1.size() > L2.size()) {
+                nodeMap.remove(L1.get(L1.size() - 1));
+                L1.remove(L1.size() - 1);
+            } else {
+                nodeMap.remove(L1.get(L1.size() - 1));
+                L2.remove(L2.size() - 1);
+            }
         }
     }
 

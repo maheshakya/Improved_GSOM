@@ -26,6 +26,8 @@ public class GSOMTrainer {
             D = new FBR();
         } else if (deleteType == DeletionType.ARC) {
             D = new ARC();
+        } else if (deleteType == DeletionType.Fritzke) {
+            D = new Fritzke(0.98); // Initialize Fritzke with p_sure value
         }
     }
 
@@ -44,6 +46,10 @@ public class GSOMTrainer {
             for (double[] input : iWeights) {
                 trainForSingleIterAndSingleInput(i, input, iStrings.get(k), learningRate, radius);
                 k++;
+            }
+
+            if (D != null) {
+                D.adjust(nodeMap);
             }
         }
         return nodeMap;
@@ -67,6 +73,7 @@ public class GSOMTrainer {
         }
 
         if (D != null) {
+            D.set_itr(iter);
             D.update(Utils.generateIndexString(winner.getX(), winner.getY()));
         }
     }
