@@ -124,7 +124,7 @@ public class GSOMTrainer {
                 && nodeMap.containsKey(nodeBottomStr)) {
             distrErrToNeighbors(winner, nodeLeftStr, nodeRightStr, nodeTopStr, nodeBottomStr);
         } else {
-            growthHandler.growNodes(nodeMap, winner); //NodeGrowthHandler takes over
+            growthHandler.growNodes(nodeMap, winner, D); //NodeGrowthHandler takes over
         }
     }
 
@@ -157,6 +157,7 @@ public class GSOMTrainer {
                 GNode initNode = new GNode(i, j, scores[2 * i + j]);
                 nodeMap.put(Utils.generateIndexString(i, j), initNode);
                 if (D != null) {
+                    D.set_itr(0);
                     D.update(Utils.generateIndexString(i, j));
                 }
             }

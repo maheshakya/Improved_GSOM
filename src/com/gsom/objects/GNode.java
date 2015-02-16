@@ -27,6 +27,7 @@ public class GNode {
         this.X = x;
         this.Y = y;
         this.weights = weights;
+        this.k_iterate = 0;
     }
 
     public int getX() {
