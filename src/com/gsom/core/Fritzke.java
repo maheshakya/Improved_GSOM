@@ -22,11 +22,11 @@ public class Fritzke extends DeleteBase {
     }
 
     @Override
-    void update(String Coordinate) {
+    public void update(String Coordinate) {
     }
 
     @Override
-    void adjust(Map<String, GNode> nodeMap) {
+    public void adjust(Map<String, GNode> nodeMap) {
 
         int new_nodes = nodeMap.size() - nodes;
 

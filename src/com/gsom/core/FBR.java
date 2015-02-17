@@ -20,7 +20,7 @@ public class FBR extends DeleteBase {
     private Map<String, Integer> freq = new HashMap<String, Integer>();
 
     @Override
-    void update(String Coordinate) {
+    public void update(String Coordinate) {
         if (T.contains(Coordinate)) {
             int index = T.indexOf(Coordinate);
             if (index > T.size() / 3) {
@@ -36,7 +36,7 @@ public class FBR extends DeleteBase {
     }
 
     @Override
-    void adjust(Map<String, GNode> nodeMap) {
+    public void adjust(Map<String, GNode> nodeMap) {
         if (nodeMap.size() > 4) {
             int min = Integer.MAX_VALUE;
             int i_ = 0;

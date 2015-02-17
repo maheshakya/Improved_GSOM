@@ -24,7 +24,7 @@ public abstract class DeleteBase {
         return iter;
     }
 
-    abstract void update(String Coordinate);
+    public abstract void update(String Coordinate);
 
-    abstract void adjust(Map<String, GNode> nodeMap);
+    public abstract void adjust(Map<String, GNode> nodeMap);
 }

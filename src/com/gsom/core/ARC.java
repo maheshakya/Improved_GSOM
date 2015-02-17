@@ -19,7 +19,7 @@ public class ARC extends DeleteBase {
     private ArrayList<String> L2 = new ArrayList<String>();
 
     @Override
-    void update(String Coordinate) {
+    public void update(String Coordinate) {
         if (L1.contains(Coordinate)) {
             L1.remove(Coordinate);
             if (!L2.contains(Coordinate)) {
@@ -34,7 +34,7 @@ public class ARC extends DeleteBase {
     }
 
     @Override
-    void adjust(Map<String, GNode> nodeMap) {
+    public void adjust(Map<String, GNode> nodeMap) {
         if (nodeMap.size() > 4) {
             if (L1.size() > L2.size()) {
                 nodeMap.remove(L1.get(L1.size() - 1));

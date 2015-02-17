@@ -53,7 +53,7 @@ public class GSOMRun implements InputParsedListener {
 
         parserFactory = new InputParserFactory();
         trainer = new GSOMTrainer(initType, d);
-        mkTrainer = new MultipleKernelTrainer(initType);
+        mkTrainer = new MultipleKernelTrainer(initType, d);
         adjuster = new GCoordAdjuster();
         smoothner = new GSOMSmoothner();
         tester = new GSOMTester();
